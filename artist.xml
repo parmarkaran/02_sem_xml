@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artists>
+    <artist id="1">
+        <name>John Doe</name>
+        <genre>Rock</genre>
+        <albums>5</albums>
+        <bio>John Doe is a renowned rock artist known for his powerful performances and soulful lyrics.</bio>
+    </artist>
+    <artist id="2">
+        <name>Jane Smith</name>
+        <genre>Pop</genre>
+        <albums>3</albums>
+        <bio>Jane Smith has captivated audiences with her smooth pop vocals and catchy songs.</bio>
+    </artist>
+    <artist id="3">
+        <name>Mike Johnson</name>
+        <genre>Jazz</genre>
+        <albums>4</albums>
+        <bio>Mike Johnson's jazz compositions are celebrated for their intricate rhythms and melodies.</bio>
+    </artist>
+</artists>
