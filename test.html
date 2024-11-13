@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Artist List</title>
+    <!-- Simple styling for the artist cards -->
+    <style>
+        .artist-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            width: 200px;
+            display: inline-block;
+        }
+
+        .artist-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .artist-card h3 {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Spotify Artist List</h1>
+    <p>This page dynamically fetches and displays a list of artists from the Spotify API.</p>
+
+    <!-- Container where artist data will be displayed -->
+    <div id="artist-list">
+        <!-- Artist cards will be injected here -->
+    </div>
+
+    <!-- JavaScript to fetch and display artist data -->
+    <script>
+
+        // Define the API endpoint and options for the request
+        const url = 'https://spotify23.p.rapidapi.com/search/?q=classical&type=artists&offset=0&limit=10&numberOfTopResults=5';
+        const options = {
+            method: 'GET',
+            headers: {
+                'x-rapidapi-key': 'e2e9ee62c7mshefec2c26d6c1fb9p14f81djsn0b6e51a2cecb',
+                'x-rapidapi-host': 'spotify23.p.rapidapi.com'
+            }
+        };
+
+        // Function to fetch data and display it on the page
+        async function fetchAndDisplayArtists() {
+            const artistListDiv = document.getElementById('artist-list'); // The div where we’ll insert artist data
+
+            try {
+                // Fetch data from the API
+                const response = await fetch(url, options);
+                const data = await response.json();
+                console.log(data);
+
+                // Extract artist information from the data
+                const artists = data.artists.items;
+
+                // Clear any existing content
+                artistListDiv.innerHTML = '';
+
+                // Loop through each artist and create HTML to display
+                artists.forEach(artist => {
+                    // Create a new div for each artist card
+                    const artistCard = document.createElement('div');
+                    artistCard.classList.add('artist-card');
+                    console.log(artist);
+
+                    // Fill the card with artist info (image, name, and link) 
+                    // <img src="${artist.images[0]?.url}" alt="${artist.name}">
+                    // <p>Followers: ${artist.followers.total.toLocaleString()}</p>
+                    // <a href="${artist.external_urls.spotify}" target="_blank">View on Spotify</a> 
+                    artistCard.innerHTML = `
+                        
+                        <h3>${artist.data.profile.name}</h3>
+                        <img src="${artist.data.visuals.avatarImage.sources[0].url}" alt="${artist.data.profile.name}">
+                        <a href="https://open.spotify.com/artist/${artist.data.uri.split(':').pop()}" target="_blank">View on Spotify</a>
+                    `;
+
+                    // Add the card to the artist list container
+                    artistListDiv.appendChild(artistCard);
+                });
+            } catch (error) {
+                // Display an error message if something goes wrong
+                console.error("Error fetching artist data:", error);
+                artistListDiv.innerHTML = `<p style="color:red;">Failed to load artist data. Please try again later.</p>`;
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = fetchAndDisplayArtists;
+    </script>
+</body>
+
+</html>
