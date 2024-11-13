@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Artist List</title>
+    <!-- Simple styling for the artist cards -->
+    <style>
+        .artist-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            width: 200px;
+            display: inline-block;
+        }
+
+        .artist-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .artist-card h3 {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .songs-list {
+            text-align: left;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Spotify Artist List</h1>
+    <p>This page dynamically fetches and displays a list of artists from the Spotify API.</p>
+
+    <!-- Container where artist data will be displayed -->
+    <div id="artist-list">
+        <!-- Artist cards will be injected here -->
+    </div>
+
+    <!-- JavaScript to fetch and display artist data -->
+    <script>
+        const artistUrl = 'https://spotify23.p.rapidapi.com/search/?q=classical&type=artists&offset=0&limit=10&numberOfTopResults=5';
+        const apiOptions = {
+            method: 'GET',
+            headers: {
+                'x-rapidapi-key': 'e2e9ee62c7mshefec2c26d6c1fb9p14f81djsn0b6e51a2cecb',
+                'x-rapidapi-host': 'spotify23.p.rapidapi.com'
+            }
+        };
+
+        // Function to fetch data and display it on the page
+        async function fetchAndDisplayArtists() {
+            const artistListDiv = document.getElementById('artist-list');
+
+            try {
+                const response = await fetch(artistUrl, apiOptions);
+                const data = await response.json();
+                const artists = data.artists.items;
+                artistListDiv.innerHTML = '';
+
+                artists.forEach(artist => {
+                    const artistCard = document.createElement('div');
+                    artistCard.classList.add('artist-card');
+
+                    // Artist details
+                    const artistName = artist.data.profile.name;
+                    const artistImage = artist.data.visuals.avatarImage.sources[0].url;
+                    const artistId = artist.data.uri.split(':').pop();
+
+                    // Populate artist card HTML
+                    artistCard.innerHTML = `
+                        <h3>${artistName}</h3>
+                        <img src="${artistImage}" alt="${artistName}">
+                        <a href="https://open.spotify.com/artist/${artistId}" target="_blank">View on Spotify</a>
+                        <button onclick="fetchSongs('${artistId}', this)">Show Songs</button>
+                        <div class="songs-list"></div>
+                    `;
+
+                    artistListDiv.appendChild(artistCard);
+                });
+            } catch (error) {
+                console.error("Error fetching artist data:", error);
+                artistListDiv.innerHTML = `<p style="color:red;">Failed to load artist data. Please try again later.</p>`;
+            }
+        }
+
+        // Function to fetch and display an artist's songs
+        async function fetchSongs(artistId, button) {
+            const songsUrl = `https://spotify23.p.rapidapi.com/artist_singles/?id=${artistId}&offset=0`;
+            const songsListDiv = button.nextElementSibling; // The div to display songs
+
+            try {
+                const response = await fetch(songsUrl, apiOptions);
+                const result = await response.json();
+                const singles = result.data.artist.discography.singles.items;
+
+                // Clear any previous song list
+                songsListDiv.innerHTML = '';
+
+                singles.forEach(single => {
+                    const song = single.releases.items[0];
+                    const songName = song.name;
+                    const songLink = `https://open.spotify.com/album/${song.id}`;
+
+                    // Add each song as a link
+                    const songItem = document.createElement('p');
+                    songItem.innerHTML = `<a href="${songLink}" target="_blank">${songName}</a>`;
+                    songsListDiv.appendChild(songItem);
+                });
+            } catch (error) {
+                console.error("Error fetching songs:", error);
+                songsListDiv.innerHTML = `<p style="color:red;">Failed to load songs. Please try again later.</p>`;
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = fetchAndDisplayArtists;
+    </script>
+</body>
+
+</html>
