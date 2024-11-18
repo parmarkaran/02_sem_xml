@@ -33,7 +33,7 @@
       <script src="js/artist.js" defer></script>
 
       <style>
-        /* Compact artist card styling */
+        /* Updated artist card styling */
         .artist-card {
             background-color: #f8f9fa;
             padding: 15px;
@@ -41,32 +41,59 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 250px;
+            max-width: 500px;
             margin: 15px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
+    
         .artist-card h3 {
             font-size: 1.2em;
             margin-bottom: 10px;
             color: #333;
         }
-
+    
         .artist-card img {
             width: 100%;
             height: auto;
             border-radius: 5px;
             margin-bottom: 10px;
         }
-
-        .artist-card button {
+    
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
             margin-top: 10px;
-            font-size: 0.9em;
         }
-
+    
+        .artist-card button {
+            font-size: 0.9em;
+            margin: 5px;
+            flex: 1;
+        }
+    
         .songs-list {
             display: none; /* Collapsible by default */
+            text-align: left;
+            width: 100%;
+            margin-top: 10px;
+        }
+    
+        .biography {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            max-height: 400px;
+            width: 100%;
         }
     </style>
+    
       
 </head>
 <!-- body -->
@@ -171,9 +198,18 @@
                                 <h3>${artistName}</h3>
                                 <img src="${artistImage}" alt="${artistName}">
                                 <a href="https://open.spotify.com/artist/${artistId}" target="_blank">View on Spotify</a>
-                                <button onclick="fetchSongs('${artistId}', this)">Show Songs</button>
-                                <div class="songs-list"></div>
+                                <div style="display: flex; align-items: flex-start;">
+                                    <div class="songs-container">
+                                    <button onclick="fetchSongs('${artistId}', this)">Show Songs</button>
+                                    <div class="songs-list"></div>
+                                </div>
+                                <div class="biography-container">
+                                    <button onclick="fetchBiography('${artistId}', this)">Show Biography</button>
+                                    <div class="biography"></div>
+                                </div>
                             `;
+
+
         
                             artistListDiv.appendChild(artistCard);
                         });
@@ -185,11 +221,11 @@
         
                 // Function to fetch and display an artist's songs
                 async function fetchSongs(artistId, button) {
-                    const songsUrl = `https://spotify23.p.rapidapi.com/artist_singles/?id=${artistId}&offset=0`;
-                    const songsListDiv = button.nextElementSibling;
+                    const songsContainer = button.parentElement;
+                    const songsListDiv = songsContainer.querySelector('.songs-list');
 
                     try {
-                        const response = await fetch(songsUrl, apiOptions);
+                        const response = await fetch(`https://spotify23.p.rapidapi.com/artist_singles/?id=${artistId}&offset=0`, apiOptions);
                         const result = await response.json();
                         const singles = result.data.artist.discography.singles.items;
 
@@ -213,6 +249,28 @@
                         songsListDiv.innerHTML = `<p style="color:red;">Failed to load songs. Please try again later.</p>`;
                     }
                 }
+
+                async function fetchBiography(artistId, button) {
+                    const biographyContainer = button.parentElement;
+                    const biographyDiv = biographyContainer.querySelector('.biography');
+
+                    try {
+                        const response = await fetch(`https://spotify23.p.rapidapi.com/artist_overview/?id=${artistId}`, apiOptions);
+                        const result = await response.json();
+                        const biography = result.data.artist.profile.biography.text;
+
+                        // Populate and toggle biography visibility
+                        biographyDiv.innerHTML = `<p>${biography}</p>`;
+                        biographyDiv.style.display = biographyDiv.style.display === 'none' || !biographyDiv.style.display ? 'block' : 'none';
+                        button.innerText = biographyDiv.style.display === 'block' ? 'Hide Biography' : 'Show Biography';
+                    } catch (error) {
+                        console.error("Error fetching biography:", error);
+                        biographyDiv.innerHTML = `<p style="color:red;">Failed to load biography. Please try again later.</p>`;
+                    }
+                }
+
+
+
         
                 // Call the function when the page loads
                 window.onload = fetchAndDisplayArtists;
