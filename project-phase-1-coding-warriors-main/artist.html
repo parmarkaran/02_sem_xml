@@ -218,6 +218,8 @@
                         artistListDiv.innerHTML = `<p style="color:red;">Failed to load artist data. Please try again later.</p>`;
                     }
                 }
+
+                
         
                 // Function to fetch and display an artist's songs
                 async function fetchSongs(artistId, button) {
@@ -250,6 +252,8 @@
                     }
                 }
 
+
+                
                 async function fetchBiography(artistId, button) {
                     const biographyContainer = button.parentElement;
                     const biographyDiv = biographyContainer.querySelector('.biography');

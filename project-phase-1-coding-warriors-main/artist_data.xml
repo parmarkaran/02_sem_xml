@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artists>
+    <artist>
+        <id>1</id>
+        <name>John Doe</name>
+        <biography>
+            John Doe is a world-renowned classical pianist, celebrated for his emotive performances 
+            and technical brilliance. His interpretations of Beethoven and Chopin have captivated audiences globally.
+        </biography>
+    </artist>
+    <artist>
+        <id>2</id>
+        <name>Jane Smith</name>
+        <biography>
+            Jane Smith is a rising star in the world of pop music, known for her soulful voice 
+            and empowering lyrics. Her music blends elements of RnB and electronic dance beats.
+        </biography>
+    </artist>
+    <artist>
+        <id>3</id>
+        <name>Emily Brown</name>
+        <biography>
+            Emily Brown is a celebrated folk musician, known for her poetic lyrics and acoustic 
+            melodies that reflect her deep connection to nature and storytelling traditions.
+        </biography>
+    </artist>
+</artists>
